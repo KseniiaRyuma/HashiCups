@@ -14,11 +14,14 @@ resource "tfe_workspace" "hashicups_prod" {
   auto_apply = false
   queue_all_runs = false
   terraform_version = "0.14.9"
+  working_directory   = "gitclones/hashicups-application/"
+
+  # VCS Section
   vcs_repo {
-    identifier = "KseniiaRyuma/field-demos-terraform-land-team-Apollo-11-assets/tree/main/gitclones/hashicups-application"
-    branch = "master"
-    oauth_token_id     = tfe_oauth_client.test-oauth-client.oauth_token_id
-  }
+      identifier = "KseniiaRyuma/field-demos-terraform-land-team-Apollo-11-assets"
+      branch = "main"
+      oauth_token_id     = tfe_oauth_client.test-oauth-client.oauth_token_id
+    }
 }
 
 # resource "tfe_workspace" "hashicups_stage" {
