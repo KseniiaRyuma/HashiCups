@@ -16,7 +16,7 @@ resource "tfe_workspace" "hashicups_prod" {
   terraform_version = "0.14.9"
   working_directory   = "gitclones/hashicups-application/"
 
-  # VCS Section
+
   vcs_repo {
       identifier = var.GITHUB_IDENTIFIER
       branch = "main"
@@ -30,6 +30,9 @@ resource "tfe_workspace" "hashicups_stage" {
   auto_apply = false
   queue_all_runs = false
   terraform_version = "0.14.9"
+  working_directory   = "gitclones/hashicups-application/"
+ 
+  # VCS Section
   vcs_repo {
     identifier = var.GITHUB_IDENTIFIER
     branch = "stage"
@@ -43,6 +46,9 @@ resource "tfe_workspace" "hashicups_dev" {
   auto_apply = true
   queue_all_runs = false
   terraform_version = "0.14.9"
+  working_directory   = "gitclones/hashicups-application/"
+ 
+  # VCS Section
   vcs_repo {
     identifier = var.GITHUB_IDENTIFIER
     branch = "development"
