@@ -1,54 +1,37 @@
-# This policy uses the tfconfig/v2 import to require that all non-root
-# modules come from the Private Module Registry and that no resources
-# or data sources are created in the root module.
+# This policy uses the Sentinel tfplan/v2 import to require that
+# specified AWS resources have all mandatory tags
 
-# Import the tfconfig/v2 import, but use the alias "tfconfig"
-import "tfconfig/v2" as tfconfig
+# Import common-functions/tfplan-functions/tfplan-functions.sentinel
+# with alias "plan"
+import "tfplan-functions" as plan
 
-# Import the tfrun import
-import "tfrun"
+# Import aws-functions/aws-functions.sentinel
+# with alias "aws"
+import "aws-functions" as aws
 
-# Standard strings import
-import "strings"
+# List of resources that are required to have name/value tags
+param resource_types default [
+  "aws_s3_bucket",
+  "aws_instance",
+]
 
-# address of the TFC or TFE server
-param address default "app.terraform.io"
+# List of mandatory tags
+# Note that the tags here are for internal HashiCorp usage
+# You should assign your own tags in a "mandatory_tags" parameter in your policy set
+# Or change the tags here in the policy.
+param mandatory_tags default ["Name", "ttl", "owner", "se-region", "purpose", "terraform"]
 
-# organization variable
-organization = tfrun.organization.name
+# Get all AWS Resources with standard tags
+allAWSResourcesWithStandardTags =
+                          aws.find_resources_with_standard_tags(resource_types)
 
-# Fnd modules called from root module that are not in the desired PMR
-violatingMCs = filter tfconfig.module_calls as index, mc {
-  mc.module_address is "" and
-  not strings.has_prefix(mc.source, address + "/" + organization)
-}
-
-# Print violation messages for invalid modules
-if length(violatingMCs) > 0 and not tfrun.is_destroy {
-  print("All modules called from the root module must come from the",
-        "private module registry", address + "/" + organization)
-  for violatingMCs as address, mc {
-    print("The module", mc.name, "called from the root module has source",
-          mc.source)
-  }
-}
-
-# Find resources and data sources in root module
-rootModuleResources = filter tfconfig.resources as address, r {
-  r.module_address is ""
-}
-
-# Print violation messages for root module resources and data sources
-if length(rootModuleResources) > 0 and not tfrun.is_destroy {
-  print("Resources and data sources are not allowed in the root module.")
-  print("Your root module has", length(rootModuleResources), "resources and",
-        "data sources.")
-}
+# Filter to AWS resources with violations
+# Warnings will be printed for all violations since the last parameter is true
+violatingAWSResources =
+        plan.filter_attribute_not_contains_list(allAWSResourcesWithStandardTags,
+                        "tags", mandatory_tags, true)
 
 # Main rule
-validated = tfrun.is_destroy or
-            (length(violatingMCs) is 0 and
-            length(rootModuleResources) is 0)
 main = rule {
- validated is true
+  length(violatingAWSResources["messages"]) is 0
 }
