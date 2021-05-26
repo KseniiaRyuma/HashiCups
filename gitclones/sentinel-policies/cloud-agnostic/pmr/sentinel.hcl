@@ -1,4 +1,4 @@
-policy "require-all-resources-from-pmr" {
-    source = "./require-all-resources-from-pmr.sentinel"
+policy "enforce-mandatory-tags" {
+    source = "./enforce-mandatory-tags.sentinel"
     enforcement_level = "soft-mandatory"
 }
