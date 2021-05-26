@@ -6,7 +6,7 @@ resource "tfe_policy_set" "pmr" {
   global = true
 
   vcs_repo {
-    identifier         = "Security-Team/sentinel-policies"
+    identifier         = var.GITHUB_IDENTIFIER
     branch             = "master"
     ingress_submodules = false
     oauth_token_id     = var.OAUTH_TOKEN_ID
