@@ -1,8 +1,8 @@
 resource "tfe_policy_set" "pmr" {
-  name          = "require-all-resources-from-pmr"
-  description   = "Requires all non-root modules come from the private module registry and prevents creation of resources in the root module"
+  name          = "enforce-mandatory-tags"
+  description   = "param mandatory_tags default Name, ttl, owner, se-region, purpose, terraform"
   organization  = var.TFC_ORGANIZATION
-  policies_path = "/cloud-agnostic/pmr"
+  policies_path = "/aws/tags/"
   global = true
 
   vcs_repo {
