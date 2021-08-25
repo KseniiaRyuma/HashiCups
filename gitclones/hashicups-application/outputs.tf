@@ -17,5 +17,5 @@ output "environment" {
 }
 
 output "hashicups" {
-    value = http://${module.frontend.public_ip}
+    value = "http://${module.frontend.public_ip}"
 }
