@@ -15,3 +15,7 @@ README
 output "environment" {
     value = var.environment
 }
+
+output "hashicups" {
+    value = http://${module.frontend.public_ip}
+}
