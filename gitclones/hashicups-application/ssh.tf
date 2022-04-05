@@ -13,6 +13,7 @@ resource "tls_private_key" "awskey" {
 
 resource "null_resource" "awskey" {
   provisioner "local-exec" {
+    interpreter = "/bin/sh"
     command = "echo \"${tls_private_key.awskey.private_key_pem}\" > ~/.ssh/awskey.pem"
   }
 
